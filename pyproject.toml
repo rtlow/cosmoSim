@@ -1,0 +1,10 @@
+[project]
+name = "cosmosim"
+version = "0.1.0"
+description = "Class for interacting with simulation data products"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.4.2",
+    "scipy>=1.17.1",
+]
