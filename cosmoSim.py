@@ -11,6 +11,8 @@ class cosmoSim:
 
     Args:
         run_name (str): Run name string as found in folder names
+        base_path (str): /path/to/data_products
+        explicit_warn (bool): Whether to emit optional warnings
 
     Attributes:
         run_name (str): Run name string as found in folder names
@@ -24,9 +26,11 @@ class cosmoSim:
         plot_label (str): Legend label to use on plots
     """
 
-    def __init__(self, run_name, base_path="../../data_prods/", explicit_warn=False):
+    def __init__(self, run_name, base_path, explicit_warn=False):
         
         self.__base_path = os.path.abspath(base_path)
+
+        self.__explicit_warn = explicit_warn
         
         with open(os.path.join(self.__base_path, run_name, 'run_info.json')) as f:
             run_info = json.load(f)
@@ -55,7 +59,7 @@ class cosmoSim:
             if 'Vkick' in run_info.keys():
                 self.Vkick = run_info['Vkick']
             else:
-                if explicit_warn:
+                if self.__explicit_warn:
                     warnings.warn(f'Vkick not explicitly set in run {self.run_name}! Assuming 100 km/s...')
                 self.Vkick = 100.
         if self.baryon_type == 'HY':
@@ -115,7 +119,8 @@ class cosmoSim:
         diff = np.amin(diffs)
 
         if diff > tolerance:
-            warnings.warn(f"WARNING: Requested redshift {redshift} is not within tolerance {tolerance} of snapshot redshift {self.redshifts[idx]} in run {self.run_name}!")
+            if self.__explicit_warn:
+                warnings.warn(f"WARNING: Requested redshift {redshift} is not within tolerance {tolerance} of snapshot redshift {self.redshifts[idx]} in run {self.run_name}!")
         if diff > max_tolerance:
             raise Exception(f"ERROR: Requested redshift {redshift} is not within {max_tolerance} of any snapshot in run {self.run_name}! Snapshot may not exist!")
         return idx
@@ -346,14 +351,16 @@ class cosmoSim:
                 _, pk_by, dk_by, _ = self.load_power_spectra(redshift, part_type='by', backend=backend)
                 omegaB = self.OmegaB[ridx]
             except:
-                warnings.warn(f'No gas for redshift {redshift} in run {self.run_name}')
+                if self.__explicit_warn:
+                    warnings.warn(f'No gas for redshift {redshift} in run {self.run_name}')
                 pk_by = dk_by = 0
                 omegaB = 0
             try:
                 _, pk_st, dk_st, _ = self.load_power_spectra(redshift, part_type='st', backend=backend)
                 omegaStar = self.OmegaStar[ridx]
             except:
-                warnings.warn(f'No stars for redshift {redshift} in run {self.run_name}')
+                if self.__explicit_warn:
+                    warnings.warn(f'No stars for redshift {redshift} in run {self.run_name}')
                 pk_st = dk_st = 0
                 omegaStar = 0
             # weight by contribution to omegaM
