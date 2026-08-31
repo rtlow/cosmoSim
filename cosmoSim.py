@@ -614,20 +614,21 @@ class cosmoSim:
 
         return rbins, densities
     
-    def get_fake_spectra_savefile_path(self, redshift):
-        """
-        Outputs the folder path to `fake_spectra` generated savefiles
+    # DEPRECATED as data products no longer have this
+    # def get_fake_spectra_savefile_path(self, redshift):
+    #     """
+    #     Outputs the folder path to `fake_spectra` generated savefiles
         
-        Args:
-            redshift (float):
-                redshift of snapshot
-        Returns:
-            base (str):
-                absolute path to the folder containing fake_spectra savefile folders
-            num (int):
-                index for this requested redshift
-        """
+    #     Args:
+    #         redshift (float):
+    #             redshift of snapshot
+    #     Returns:
+    #         base (str):
+    #             absolute path to the folder containing fake_spectra savefile folders
+    #         num (int):
+    #             index for this requested redshift
+    #     """
         
-        num = self.redshift_to_index(redshift)
-        base = str(os.path.abspath(os.path.join(self.__base_path, self.run_name)))
-        return num, base
+    #     num = self.redshift_to_index(redshift)
+    #     base = str(os.path.abspath(os.path.join(self.__base_path, self.run_name)))
+    #     return num, base
